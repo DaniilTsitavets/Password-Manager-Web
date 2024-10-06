@@ -1,0 +1,50 @@
+name: Gradle Build
+run-name: ${{ github.actor }} started Gradle Build
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  JAVA_HOME: '/opt/hostedtoolcache/Java_Adopt_jdk/21.0.4-7.0.LTS/x64'
+  JAVA_HOME_21_X64: '/opt/hostedtoolcache/Java_Adopt_jdk/21.0.4-7.0.LTS/x64'
+
+jobs:
+  gradle-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache JDK
+        id: cache-jdk
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.JAVA_HOME_21_X64 }}
+          key: ${{ runner.os }}-jdk-21
+          restore-keys: ${{ runner.os }}-jdk-
+
+      - name: Install JDK
+        if: ${{ steps.cache-jdk.outputs.cache-hit != 'true' }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: Set installed/cached Java path [${{ env.JAVA_HOME_21_X64 }}]
+        run: echo "${{ env.JAVA_HOME_21_X64 }}/bin" >> $GITHUB_PATH
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle Wrapper
+        run: ./gradlew build
