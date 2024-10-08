@@ -38,26 +38,10 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     runtimeOnly 'com.h2database:h2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-//    spotbugsPlugins "com.h3xstream.findsecbugs:findsecbugs-plugin: 1.13.0"
-//    spotbugs "com.github.spotbugs:spotbugs: 4.8.6"
+    testImplementation 'ch.qos.logback:logback-classic:1.5.8'
+    implementation 'ch.qos.logback:logback-core:1.5.8'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
-//spotbugs {
-//    toolVersion = '4.8.6'
-//    ignoreFailures = false
-//    showStackTraces = true
-//    showProgress = true
-//    reportsDir = layout.buildDirectory.dir("reports/spotbugs")
-//}
-//
-//spotbugsMain {
-//    reports {
-//        html {
-//            required = true
-//            stylesheet = 'fancy-hist.xsl'
-//        }
-//    }
-//}
