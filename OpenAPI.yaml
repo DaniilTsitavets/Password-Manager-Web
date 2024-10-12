@@ -1,0 +1,159 @@
+openapi: 3.0.3
+info:
+  title: Password Management Service
+  description: API for managing passwords, including generating and updating passwords for specific services.
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080'
+
+paths:
+  /password:
+    get:
+      summary: Get all passwords
+      description: Retrieve a list of all stored passwords.
+      responses:
+        '200':
+          description: A list of passwords
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Password'
+
+    post:
+      summary: Create a new password
+      description: Create a new password for a specified service with a provided password value.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordRequest'
+      responses:
+        '200':
+          description: The created password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Password'
+
+  /password/generate:
+    post:
+      summary: Generate a password for a service
+      description: Generate a new password for a specified service name.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                serviceName:
+                  type: string
+                  example: "exampleService"
+      responses:
+        '200':
+          description: The generated password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Password'
+
+  /password/{serviceName}:
+    get:
+      summary: Get a password by service name
+      description: Retrieve a password for a specified service name.
+      parameters:
+        - in: path
+          name: serviceName
+          required: true
+          description: Name of the service to retrieve the password for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The password for the specified service
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Password'
+        '404':
+          description: Password not found for the specified service name
+
+  /password/{serviceName}/update:
+    put:
+      summary: Update a password
+      description: Update the password for a specified service name with a new password value.
+      parameters:
+        - in: path
+          name: serviceName
+          required: true
+          description: Name of the service for which the password should be updated
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordRequest'
+      responses:
+        '200':
+          description: The updated password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Password'
+        '404':
+          description: Password not found for the specified service name
+
+  /password/{serviceName}/update/generate:
+    put:
+      summary: Update a password with a generated password
+      description: Update the password for a specified service name by generating a new password.
+      parameters:
+        - in: path
+          name: serviceName
+          required: true
+          description: Name of the service for which the password should be updated
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The updated password with a generated value
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Password'
+        '404':
+          description: Password not found for the specified service name
+
+components:
+  schemas:
+    Password:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        passwordValue:
+          type: string
+          example: "sµCt0?z5KZFf"
+        serviceName:
+          type: string
+          example: "exampleService"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-10-12T17:27:41.607Z"
+
+    PasswordRequest:
+      type: object
+      properties:
+        passwordValue:
+          type: string
+          example: "w6'fm[O‰kgqA!"
+        serviceName:
+          type: string
+          example: "exampleService"
