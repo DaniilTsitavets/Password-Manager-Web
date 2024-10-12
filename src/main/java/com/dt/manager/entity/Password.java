@@ -1,16 +1,15 @@
 package com.dt.manager.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 @Table
 @Entity
 @NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor
-@Data
 public class Password {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
