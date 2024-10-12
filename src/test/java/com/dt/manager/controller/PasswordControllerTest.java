@@ -13,7 +13,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -63,10 +62,10 @@ public class PasswordControllerTest {
                 .thenReturn(password);
 
         mockMvc.perform(post("/password/generate")
-                        .content("example")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"serviceName\": \"" + password.getServiceName() + "\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.serviceName").value("example"))
+                .andExpect(jsonPath("$.serviceName").value(password.getServiceName()))
                 .andExpect(jsonPath("$.passwordValue").value("generatedPassword"));
     }
 
