@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/password")
 public class PasswordController {
     private final PasswordService passwordService;
 
@@ -19,9 +20,9 @@ public class PasswordController {
         return passwordService.getAllPasswords();
     }
 
-    @GetMapping("/{id}")
-    public Optional<Password> getPasswordById(@PathVariable Integer id) {
-        return passwordService.getPasswordById(id);
+    @GetMapping("/{serviceName}")
+    public Optional<Password> getPasswordById(@PathVariable String serviceName) {
+        return passwordService.getPasswordByServiceName(serviceName);
     }
 
     @PostMapping
@@ -29,9 +30,30 @@ public class PasswordController {
         return passwordService.createPassword(password.getPasswordValue(), password.getServiceName());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Password> updatePassword(@PathVariable int id, @RequestBody Password password) {
-        Optional<Password> updatedPassword = passwordService.updatePassword(id, password.getPasswordValue(), password.getServiceName());
+    @PostMapping("/generate")
+    public ResponseEntity<Password> generatePasswordForService(@RequestBody String serviceName) {
+
+        Password generatedPassword = passwordService
+                .createPasswordWithGeneratedPassword(serviceName);
+
+        return ResponseEntity.ok(generatedPassword);
+    }
+
+    @PutMapping("/{serviceName}/update")
+    public ResponseEntity<Password> updatePassword(@PathVariable String serviceName,
+                                                   @RequestBody Password password) {
+        Optional<Password> updatedPassword = passwordService
+                .updatePassword(password.getPasswordValue(), serviceName);
+
+        return updatedPassword.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{serviceName}/update/generate")
+    public ResponseEntity<Password> updatePasswordWithGeneratedPassword(@PathVariable String serviceName) {
+
+        Optional<Password> updatedPassword = passwordService
+                .updatePasswordWithGeneratedPassword(serviceName);
         return updatedPassword.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
