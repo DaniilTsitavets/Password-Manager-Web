@@ -21,8 +21,10 @@ public class PasswordController {
     }
 
     @GetMapping("/{serviceName}")
-    public Optional<Password> getPasswordById(@PathVariable String serviceName) {
-        return passwordService.getPasswordByServiceName(serviceName);
+    public ResponseEntity<Password> getPasswordByServiceName(@PathVariable String serviceName) {
+        Optional<Password> password = passwordService.getPasswordByServiceName(serviceName);
+        return password.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
