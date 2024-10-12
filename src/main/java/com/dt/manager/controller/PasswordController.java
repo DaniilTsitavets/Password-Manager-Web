@@ -1,9 +1,11 @@
 package com.dt.manager.controller;
 
 import com.dt.manager.entity.Password;
+import com.dt.manager.entity.PasswordDto;
 import com.dt.manager.service.PasswordService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.Optional;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/password")
+@Validated
 public class PasswordController {
     private final PasswordService passwordService;
 
@@ -28,25 +31,27 @@ public class PasswordController {
     }
 
     @PostMapping
-    public Password addPassword(@RequestBody Password password) {
-        return passwordService.createPassword(password.getPasswordValue(), password.getServiceName());
+    public ResponseEntity<Password> addPassword(@RequestBody PasswordDto passwordDto) {
+        Password password = passwordService
+                .createPassword(passwordDto.getPasswordValue(), passwordDto.getServiceName());
+        return ResponseEntity.ok(password);
     }
 
     @PostMapping("/generate")
-    public ResponseEntity<Password> generatePasswordForService(@RequestBody String serviceName) {
+    public ResponseEntity<Password> generatePasswordForService(@RequestBody PasswordDto passwordDto) {
 
         Password generatedPassword = passwordService
-                .createPasswordWithGeneratedPassword(serviceName);
+                .createPasswordWithGeneratedPassword(passwordDto.getServiceName());
 
         return ResponseEntity.ok(generatedPassword);
     }
 
     @PutMapping("/{serviceName}/update")
     public ResponseEntity<Password> updatePassword(@PathVariable String serviceName,
-                                                   @RequestBody Password password) {
-        Optional<Password> updatedPassword = passwordService
-                .updatePassword(password.getPasswordValue(), serviceName);
+                                                   @RequestBody PasswordDto passwordDto) {
 
+        Optional<Password> updatedPassword = passwordService
+                .updatePassword(passwordDto.getPasswordValue(), serviceName);
         return updatedPassword.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
