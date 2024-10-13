@@ -2,6 +2,8 @@ package com.dt.manager.service;
 
 import com.dt.manager.entity.Password;
 import com.dt.manager.repository.PasswordRepository;
+import com.dt.manager.validator.Generator;
+import com.dt.manager.validator.Validator;
 import lombok.AllArgsConstructor;
 import org.passay.*;
 import org.springframework.stereotype.Service;
@@ -14,8 +16,8 @@ import java.util.Optional;
 @Service
 public class PasswordService {
     private PasswordRepository passwordRepository;
-    private PasswordValidator passwordValidator;
-    private PasswordGenerator passwordGenerator;
+    private Validator passwordValidator;
+    private Generator passwordGenerator;
 
     public List<Password> getAllPasswords() {
         return passwordRepository.findAll();

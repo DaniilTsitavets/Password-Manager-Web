@@ -2,14 +2,14 @@ package com.dt.manager.service;
 
 import com.dt.manager.entity.Password;
 import com.dt.manager.repository.PasswordRepository;
+import com.dt.manager.validator.Generator;
+import com.dt.manager.validator.Validator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.passay.PasswordData;
-import org.passay.PasswordGenerator;
-import org.passay.PasswordValidator;
 import org.passay.RuleResult;
 
 import java.time.LocalDateTime;
@@ -25,10 +25,10 @@ class PasswordServiceTest {
     private PasswordRepository passwordRepository;
 
     @Mock
-    private PasswordValidator passwordValidator;
+    private Validator passwordValidator;
 
     @Mock
-    private PasswordGenerator passwordGenerator;
+    private Generator passwordGenerator;
 
     @InjectMocks
     private PasswordService passwordService;

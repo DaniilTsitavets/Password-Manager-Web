@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 @Getter
 @Component
-public class PasswordValidator extends org.passay.PasswordValidator {
-    public PasswordValidator() {
+public class Validator extends org.passay.PasswordValidator {
+    public Validator() {
         super(Arrays.asList(
                 new CharacterRule(EnglishCharacterData.UpperCase, 1),
                 new CharacterRule(EnglishCharacterData.LowerCase, 1),
