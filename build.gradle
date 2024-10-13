@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.4'
     id 'io.spring.dependency-management' version '1.1.6'
-//    id 'com.github.spotbugs' version '6.0.19'
+    id 'com.github.spotbugs' version '6.0.19'
 }
 
 group = 'com.dt'
@@ -21,6 +21,7 @@ configurations {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
@@ -32,14 +33,17 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     implementation 'org.springframework.security:spring-security-core'
 	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
-    implementation 'org.passay:passay:1.6.5'
+    implementation "org.passay:passay:${passayVersion}"
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     runtimeOnly 'org.postgresql:postgresql'
     runtimeOnly 'com.h2database:h2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    testImplementation 'ch.qos.logback:logback-classic:1.5.8'
-    implementation 'ch.qos.logback:logback-core:1.5.8'
+    testImplementation "ch.qos.logback:logback-classic:${logbackVersion}"
+    implementation "ch.qos.logback:logback-core:${logbackVersion}"
+    spotbugsPlugins "com.h3xstream.findsecbugs:findsecbugs-plugin:${findSecBugsVersion}"
+    spotbugs "com.github.spotbugs:spotbugs:${spotbugsVersion}"
+
 }
 
 tasks.named('test') {
