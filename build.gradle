@@ -49,3 +49,20 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+spotbugs {
+    toolVersion = "${spotbugsVersion}"
+    ignoreFailures = false
+    showStackTraces = true
+    showProgress = true
+    reportsDir = layout.buildDirectory.dir("reports/spotbugs")
+}
+
+spotbugsMain {
+    reports {
+        html {
+            required = true
+            stylesheet = 'fancy-hist.xsl'
+        }
+    }
+}
