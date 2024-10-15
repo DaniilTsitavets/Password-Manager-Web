@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.3.4'
     id 'io.spring.dependency-management' version '1.1.6'
     id 'com.github.spotbugs' version '6.0.19'
+    id 'org.openapi.generator' version '7.7.0'
 }
 
 group = 'com.dt'
@@ -33,6 +34,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     implementation 'org.springframework.security:spring-security-core'
 	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocOpenAPIStarterUiVersion}"
     implementation "org.passay:passay:${passayVersion}"
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -71,3 +73,15 @@ spotbugsTest {
     excludeFilter = file('./config/spotbugs/spotbugs-exclude.xml')
 }
 
+openApiGenerate {
+    generatorName = "typescript-fetch"
+    inputSpec = "${layout.projectDirectory.asFile.path}/openapi.yaml"
+    outputDir = layout.buildDirectory.dir("generated/ts-client").get().asFile.path
+    apiPackage = "api"
+    modelPackage = "models"
+    skipValidateSpec = true
+}
+
+tasks.compileJava {
+    dependsOn tasks.openApiGenerate
+}
