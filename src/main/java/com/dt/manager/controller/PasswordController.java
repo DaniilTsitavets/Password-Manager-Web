@@ -1,7 +1,6 @@
 package com.dt.manager.controller;
 
 import com.dt.manager.entity.Password;
-import com.dt.manager.entity.PasswordDto;
 import com.dt.manager.service.PasswordService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,52 +15,42 @@ import java.util.Optional;
 @RequestMapping("/password")
 @Validated
 public class PasswordController {
-    private final PasswordService passwordService;
+  private final PasswordService passwordService;
 
-    @GetMapping
-    public List<Password> getAllPasswords() {
-        return passwordService.getAllPasswords();
-    }
+  @GetMapping
+  public List<Password> getAllPasswords() {
+    return passwordService.getAllPasswords();
+  }
 
-    @GetMapping("/{serviceName}")
-    public ResponseEntity<Password> getPasswordByServiceName(@PathVariable String serviceName) {
-        Optional<Password> password = passwordService.getPasswordByServiceName(serviceName);
-        return password.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+  @GetMapping("/{serviceName}")
+  public ResponseEntity<Password> getPasswordByServiceName(@PathVariable String serviceName) {
 
-    @PostMapping
-    public ResponseEntity<Password> addPassword(@RequestBody PasswordDto passwordDto) {
-        Password password = passwordService
-                .createPassword(passwordDto.getPasswordValue(), passwordDto.getServiceName());
-        return ResponseEntity.ok(password);
-    }
+    Optional<Password> password = passwordService.getPasswordByServiceName(serviceName);
+    return password.map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.notFound().build());
+  }
 
-    @PostMapping("/generate")
-    public ResponseEntity<Password> generatePasswordForService(@RequestBody PasswordDto passwordDto) {
+  @PostMapping
+  public ResponseEntity<Password> addPassword(
+      @RequestParam String serviceName,
+      @RequestParam(required = false) String passwordValue) {
 
-        Password generatedPassword = passwordService
-                .createPasswordWithGeneratedPassword(passwordDto.getServiceName());
+    Password password = passwordService.createPassword(
+        passwordValue != null ? passwordValue : passwordService.generatePassword(), serviceName);
 
-        return ResponseEntity.ok(generatedPassword);
-    }
+    return ResponseEntity.ok(password);
+  }
 
-    @PutMapping("/{serviceName}/update")
-    public ResponseEntity<Password> updatePassword(@PathVariable String serviceName,
-                                                   @RequestBody PasswordDto passwordDto) {
+  @PutMapping("/{serviceName}")
+  public ResponseEntity<Password> updatePassword(
+      @PathVariable String serviceName,
+      @RequestParam(required = false) String passwordValue) {
 
-        Optional<Password> updatedPassword = passwordService
-                .updatePassword(passwordDto.getPasswordValue(), serviceName);
-        return updatedPassword.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+    Optional<Password> updatedPassword = passwordService.updatePassword(
+        passwordValue != null ? passwordValue : passwordService.generatePassword(),
+        serviceName);
 
-    @PutMapping("/{serviceName}/update/generate")
-    public ResponseEntity<Password> updatePasswordWithGeneratedPassword(@PathVariable String serviceName) {
-
-        Optional<Password> updatedPassword = passwordService
-                .updatePasswordWithGeneratedPassword(serviceName);
-        return updatedPassword.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+    return updatedPassword.map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.notFound().build());
+  }
 }

@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Password Management Service
-  description: API for managing passwords, including generating and updating passwords for specific services.
+  description: API for managing passwords, including creating, retrieving, and updating passwords for specific services.
   version: 1.0.0
 servers:
   - url: 'http://localhost:8080'
@@ -23,38 +23,23 @@ paths:
 
     post:
       summary: Create a new password
-      description: Create a new password for a specified service with a provided password value.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PasswordRequest'
+      description: Create a new password for a specified service.
+      parameters:
+        - in: query
+          name: serviceName
+          required: true
+          description: Name of the service for which the password is being created
+          schema:
+            type: string
+        - in: query
+          name: passwordValue
+          required: false
+          description: Optional password value. If not provided, a generated password will be created.
+          schema:
+            type: string
       responses:
         '200':
           description: The created password
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Password'
-
-  /password/generate:
-    post:
-      summary: Generate a password for a service
-      description: Generate a new password for a specified service name.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                serviceName:
-                  type: string
-                  example: "exampleService"
-      responses:
-        '200':
-          description: The generated password
           content:
             application/json:
               schema:
@@ -81,10 +66,9 @@ paths:
         '404':
           description: Password not found for the specified service name
 
-  /password/{serviceName}/update:
     put:
       summary: Update a password
-      description: Update the password for a specified service name with a new password value.
+      description: Update the password for a specified service name.
       parameters:
         - in: path
           name: serviceName
@@ -92,12 +76,12 @@ paths:
           description: Name of the service for which the password should be updated
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PasswordRequest'
+        - in: query
+          name: passwordValue
+          required: false
+          description: Optional new password value. If not provided, a new generated password will be created.
+          schema:
+            type: string
       responses:
         '200':
           description: The updated password
@@ -107,28 +91,6 @@ paths:
                 $ref: '#/components/schemas/Password'
         '404':
           description: Password not found for the specified service name
-
-  /password/{serviceName}/update/generate:
-    put:
-      summary: Update a password with a generated password
-      description: Update the password for a specified service name by generating a new password.
-      parameters:
-        - in: path
-          name: serviceName
-          required: true
-          description: Name of the service for which the password should be updated
-          schema:
-            type: string
-      responses:
-        '200':
-          description: The updated password with a generated value
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Password'
-        '404':
-          description: Password not found for the specified service name
-
 components:
   schemas:
     Password:
